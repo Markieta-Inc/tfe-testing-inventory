@@ -75,9 +75,22 @@ resource "github_team" "example" {
   privacy     = each.value.privacy
 }
 
-#resource "github_team_membership" "example" {
-#  for_each = {for user in var.users: user.username => user}
-#  team_id  = "${github_team.some_team.id}"
-#  username = "SomeUser"
-#  role     = "member"
-#}
+locals {
+  user_team_memberships = flatten([
+    for team in var.teams: [
+      for user in team.users : {
+        team = team.name
+        username = user.username
+        role = user.role
+      }
+    ]
+  ])
+}
+
+resource "github_team_membership" "example" {
+  for_each = {for ut in local.user_team_memberships: "${ut.team}-${ut.username}" => ut}
+  
+  team_id  = github_team.example[each.value.team].id
+  username = each.value.username
+  role     = each.value.role
+}

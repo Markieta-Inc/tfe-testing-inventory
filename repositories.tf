@@ -36,6 +36,9 @@ variable "teams" {
       privacy = "closed",
       users = [
         
+      ],
+      repos = [
+
       ]
     },
     {
@@ -50,6 +53,16 @@ variable "teams" {
         {
           username = "Markieta3",
           role = "maintainer"
+        }
+      ],
+      repos = [
+        {
+          name = "repo1",
+          permission = "pull"
+        },
+        {
+          name = "repo2",
+          permission = "admin"
         }
       ]
     }
@@ -108,4 +121,27 @@ resource "github_team_membership" "example" {
   team_id  = github_team.example[each.value.team].id
   username = each.value.username
   role     = each.value.role
+}
+
+locals {
+  team_repositories = flatten([
+    for team in var.teams: [
+      for repo in team.repos: {
+        team = team.name
+        repo = repo.name
+        permission = repo.permission
+      }
+    ]
+  ])
+}
+
+resource "github_team_repository" "example" {
+  for_each = {
+    for tr in local.team_repositories:
+    "${tr.team}-${tr.repo}" => tr
+  }
+
+  team_id    = github_team.example[each.value.team].id
+  repository = each.value.repo
+  permission = each.value.permission
 }

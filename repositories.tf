@@ -57,19 +57,31 @@ variable "teams" {
 }
 
 resource "github_repository" "example" {
-  for_each = {for repo in var.repos: repo.name => repo}
+  for_each = {
+    for repo in var.repos:
+    repo.name => repo
+  }
+
   name = each.value.name
   description = each.value.description
 }
 
 resource "github_membership" "example" {
-  for_each = {for user in var.users: user.username => user}
+  for_each = {
+    for user in var.users:
+    user.username => user
+  }
+
   username = each.value.username
   role     = each.value.role
 }
 
 resource "github_team" "example" {
-  for_each = {for team in var.teams: team.name => team}
+  for_each = {
+    for team in var.teams:
+    team.name => team
+  }
+
   name        = each.value.name
   description = each.value.description
   privacy     = each.value.privacy
@@ -78,7 +90,7 @@ resource "github_team" "example" {
 locals {
   user_team_memberships = flatten([
     for team in var.teams: [
-      for user in team.users : {
+      for user in team.users: {
         team = team.name
         username = user.username
         role = user.role
@@ -88,7 +100,10 @@ locals {
 }
 
 resource "github_team_membership" "example" {
-  for_each = {for ut in local.user_team_memberships: "${ut.team}-${ut.username}" => ut}
+  for_each = {
+    for ut in local.user_team_memberships:
+    "${ut.team}-${ut.username}" => ut
+  }
   
   team_id  = github_team.example[each.value.team].id
   username = each.value.username

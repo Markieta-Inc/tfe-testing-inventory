@@ -119,7 +119,7 @@ resource "github_team_membership" "example" {
   }
   
   team_id  = github_team.example[each.value.team].id
-  username = each.value.username
+  username = github_membership.example[each.value.username].username
   role     = each.value.role
 }
 
@@ -142,6 +142,6 @@ resource "github_team_repository" "example" {
   }
 
   team_id    = github_team.example[each.value.team].id
-  repository = each.value.repo
+  repository = github_repository.example[each.value.repo].id
   permission = each.value.permission
 }

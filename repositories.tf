@@ -11,6 +11,10 @@ variable "repos" {
     {
       name = "repo2"
       description = "Repository 2"
+    },
+    {
+      name = "repo3"
+      description = "Repository 3"
     }
   ]
 }

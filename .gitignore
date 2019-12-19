@@ -1,4 +1,4 @@
-#terraform.tfstate
+terraform.tfstate
 .terraform/plugins/linux_amd64/lock.json
 .terraform/plugins/linux_amd64/terraform-provider-github_v2.2.1_x4
 terraform.tfstate.backup
